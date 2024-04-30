@@ -1,8 +1,6 @@
 import home from "../../assets/home.svg";
 
 const CurrentWeather = ({ weatherData }) => {
-  console.log("weatherData from currentWeather", weatherData);
-
   return (
     <>
       {!weatherData ? (

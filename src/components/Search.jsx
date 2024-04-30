@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { AsyncPaginate } from "react-select-async-paginate";
 import { CITYDATA_API_OPTIONS, CITYDATA_API_URL } from "./API";
+import { fetchWeatherData } from "./fetchWeatherData";
+import { WeatherContext } from "./WeatherContext";
 
-const Search = ({ handleSearchChange }) => {
+const Search = () => {
   const [search, setSearch] = useState(null);
 
+  const weather = useContext(WeatherContext);
+
+  //load options for async-paginate
   const loadOptions = async (searchValue) => {
     try {
       const response = await fetch(
@@ -16,7 +21,7 @@ const Search = ({ handleSearchChange }) => {
       return {
         options: result?.data?.map((city) => {
           return {
-            value: { city },
+            value: { city }, //has lat and lon values
             label: `${city.name} ${city.countryCode}`,
           };
         }),
@@ -26,10 +31,13 @@ const Search = ({ handleSearchChange }) => {
     }
   };
 
-  const handleChange = (searchData) => {
+  const handleChange = async (searchData) => {
     setSearch(searchData);
-    handleSearchChange(searchData);
+    const data = await fetchWeatherData(searchData);
+    weather.setCurrentWeather(data);
   };
+
+  console.log("curr weather :", weather.currentWeather);
 
   return (
     <div className="w-1/2 my-10 mx-auto rounded-md">
